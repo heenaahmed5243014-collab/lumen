@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; media-src 'self' blob:; img-src 'self' data:">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6c5ce7">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Lumen</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="logo">✦</span> Lumen</div>
+    <nav id="nav">
+      <button data-view="today" class="active"><span>☀️</span>Today</button>
+      <button data-view="library"><span>📚</span>Library</button>
+      <button data-view="review"><span>🃏</span>Review</button>
+      <button data-view="train"><span>🧠</span>Brain Training</button>
+      <button data-view="speak"><span>🎤</span>Speaking</button>
+      <button data-view="grow"><span>🌳</span>Grow</button>
+      <button data-view="progress"><span>📈</span>Progress</button>
+      <button data-view="premium" class="premium-link"><span>👑</span>Premium</button>
+      <button data-view="settings"><span>⚙️</span>Settings</button>
+    </nav>
+    <div class="side-foot">
+      <div class="level-box">
+        <div class="row"><b id="lvl">Lv 1</b><span id="xpText">0 XP</span></div>
+        <div class="bar"><i id="xpBar"></i></div>
+      </div>
+      <div class="streak-pill">🔥 <b id="streakCount">0</b> day streak</div>
+      <button id="installBtn" class="btn sm hidden">⬇ Install app</button>
+      <div class="offline" id="netStatus">● Offline-ready</div>
+    </div>
+  </aside>
+  <main id="view"></main>
+  <div id="modal" class="modal hidden"><div class="modal-card" id="modalCard"></div></div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

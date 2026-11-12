@@ -1,0 +1,16 @@
+{
+  "name": "Lumen — Learn, Train, Speak, Grow",
+  "short_name": "Lumen",
+  "description": "Offline self-growth app: book summaries, brain training, speaking practice, habits and progress tracking.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f6fb",
+  "theme_color": "#6c5ce7",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

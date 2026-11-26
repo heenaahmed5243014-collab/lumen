@@ -33,12 +33,19 @@ async function load() {
   if (data) S = Object.assign(defaults(), data, { profile: Object.assign(defaults().profile, data.profile || {}) });
 }
 let saveT;
-function save() {
-  clearTimeout(saveT);
-  saveT = setTimeout(() => {
-    try { hasBridge ? window.lumenStore.save(S) : localStorage.setItem('lumen', JSON.stringify(S)); } catch {}
-  }, 150);
+function writeNow() {
+  clearTimeout(saveT); saveT = null;
+  try { hasBridge ? window.lumenStore.save(S) : localStorage.setItem('lumen', JSON.stringify(S)); } catch {}
 }
+function save() { clearTimeout(saveT); saveT = setTimeout(writeNow, 150); }
+// Phones can close the app as soon as it goes to the background: write pending changes right away.
+const flush = () => { if (saveT) writeNow(); };
+window.addEventListener('pagehide', flush);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+// Ask the browser not to evict saved progress.
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch {}
+// Remember which screen was open so reopening the app returns there.
+const rememberScreen = (v) => { try { localStorage.setItem('lumen:screen', v); } catch {} };
 
 /* ---------- Premium ---------- */
 const isPremium = () => S.premium.active || S.premium.trialEnds > Date.now();
@@ -116,7 +123,7 @@ function renderSide() {
   document.documentElement.dataset.theme = S.profile.theme;
 }
 function go(view) {
-  setCleanup(null); currentView = view;
+  setCleanup(null); currentView = view; rememberScreen(view);
   document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('active', b.dataset.view === view));
   (views[view] || views.today)(); $('#view').scrollTop = 0;
 }
@@ -216,6 +223,7 @@ function openBook(id) {
   if (b.premium && needPremium('Full library')) return;
   const p = S.books[id] || (S.books[id] = { idx: 0, done: false });
   if (p.idx >= b.ideas.length) p.idx = 0;
+  rememberScreen('book:' + id);
   const renderIdea = () => {
     const [title, text] = b.ideas[p.idx];
     $('#view').innerHTML = `<div class="reader">
@@ -741,7 +749,14 @@ document.addEventListener('click', (e) => {
 });
 
 /* ---------- Boot ---------- */
-load().then(() => { renderSide(); go('today'); if (!S.profile.name) onboarding(); });
+load().then(() => {
+  renderSide();
+  let last = 'today';
+  try { last = localStorage.getItem('lumen:screen') || 'today'; } catch {}
+  if (!S.profile.name) { go('today'); onboarding(); }
+  else if (last.startsWith('book:') && D.books.some((b) => b.id === last.slice(5))) { go('library'); openBook(last.slice(5)); }
+  else go(views[last] ? last : 'today');
+});
 })();
 
 /* ---------- PWA: offline cache + install button ---------- */
